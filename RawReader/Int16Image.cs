@@ -12,15 +12,26 @@ namespace RawReader
         private int _width;
         private int _height;
         private int _actualFileSize;
-
+        private string _fileName;
         public Int16Image()
         {
+
+        }
+
+        public Int16Image(string fileName, int width,int height,UInt16[] image,int actualFileSize)
+        {
+            _height = height;
+            _width = width;
+            _fileName = fileName;
+            _actualFileSize = actualFileSize;
+            _fileArr = image;
 
         }
 
         public Int16Image(string fileName, int width, int height) {
             _height = height;
             _width = width;
+            _fileName = fileName;
             LoadUint16File(fileName, _width, _height);
 
         }
@@ -43,8 +54,11 @@ namespace RawReader
         {
             return _fileArr;
         }
-
-        public UInt16[] Compare(Int16Image int16Array)
+        public string GetFileName()
+        {
+            return _fileName;
+        }
+        public Int16Image CompareImages(Int16Image int16Array)
         {
             var secondImage = int16Array.Getbytes();
             UInt16[] newImage = new UInt16[_actualFileSize];
@@ -53,7 +67,8 @@ namespace RawReader
                 newImage[index] = (UInt16)(_fileArr[index] - secondImage[index]);
                 Console.WriteLine(newImage[index]);
             }
-            return newImage;
+            var newInt16 = new Int16Image("comparison of" + _fileName + " " + int16Array.GetFileName(), _width, _height, newImage, _actualFileSize);
+            return newInt16;
         }
 
 
