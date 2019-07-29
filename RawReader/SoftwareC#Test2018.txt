@@ -1,0 +1,22 @@
+Dage Software Test 19/04/18
+
+Write a simple C# application to take two images and generate a third image which is the difference of the two. Each resultant pixel grey level value will be calculated by subtracting the pixel value of the second image from the corresponding pixel value of the first.
+
+Requirements:
+- The application is to run on a Windows 7 or 10 platform.
+- Read the two image files in and write out the resultant values to a third file of the same format.
+- Demonstrate the use of asynchronous programming in the solution.
+- Provide the source code such that it can be rebuilt locally using Visual Studio 2015 or later.
+
+Guidelines:
+- A console application is acceptable.
+- Raw image file format:
+  - Very simple format
+  - The file does not contain any header or footer data
+  - Only contains grey level information
+  - Each pixel is represented by an unsigned 16bit value representing a grey level, where a value of 0x0000 represents black
+- Subtracting an image from itself will result in a black image where all pixels are set to zero.
+- Two example raw image files are included for testing; each has 540 by 1200 pixels.
+
+
+Please contact Simon White [simon.white@nordson.com] if you have any questions.
