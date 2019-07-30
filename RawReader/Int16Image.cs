@@ -67,7 +67,7 @@ namespace RawReader
             return _fileName;
         }
 
-
+        //can be made async thruouh use of a 2 d array
         public Int16Image CompareImages(Int16Image int16Array)
         {
             var secondImage = int16Array.Getbytes();
