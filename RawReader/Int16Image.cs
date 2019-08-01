@@ -10,6 +10,7 @@ namespace RawReader
 {
     public class Int16Image
     {
+        public const int MAX_WIDTH_HEIGHT = 10000;
         private UInt16[] _fileArr;
         private int _width;
         private int _height;
@@ -34,8 +35,6 @@ namespace RawReader
             _height = height;
             _width = width;
             _fileName = fileName;
-            LoadUint16File(fileName, _width, _height);
-
         }
         /// <summary>
         /// Produces local Uint16 to represent the current file. 
@@ -44,8 +43,16 @@ namespace RawReader
         /// <param name="width"></param>
         /// <param name="height"></param>
         public void LoadUint16File(string fileName, int width, int height) {
-            byte[] fileBytes = File.ReadAllBytes(fileName);
-            int expectedFileSize = height * width;
+            _height = height;
+            _width = width;
+            _fileName = fileName;
+            LoadUint16File();
+        }
+
+        public void LoadUint16File()
+        {
+            byte[] fileBytes = File.ReadAllBytes(_fileName);
+            int expectedFileSize = _height * _width;
             _actualFileSize = fileBytes.Count() / sizeof(UInt16); // Could perform an assert here to see if expected meets actual...
             _fileArr = new UInt16[_actualFileSize];
 
@@ -56,10 +63,59 @@ namespace RawReader
             }
         }
 
+        private UInt16[][] _fileArr2d;
+
+        public void InitialiseArr(int width, int height)
+        {
+            _fileArr2d = new UInt16[height][];
+            for(int h = 0; h < height; h++)
+            {
+                _fileArr2d[h] = new UInt16[width];
+            }
+
+        }
+
+        public void LoadUint16File2d(string fileName, int width, int height)
+        {
+            byte[] fileBytes = File.ReadAllBytes(fileName);
+            int expectedFileSize = height * width;
+            _actualFileSize = fileBytes.Count() / sizeof(UInt16); // Could perform an assert here to see if expected meets actual...
+            InitialiseArr(width, height);
+
+            for(int h = 0; h < height; h++)
+            {
+                for(int w = 0; w < width; w++)
+                {
+                    var fileIndex = (h * width) + w;
+                    _fileArr2d[h][w] = BitConverter.ToUInt16(fileBytes, fileIndex * sizeof(Int16));
+                }
+            }
+        }
+
+        public Int16Image CompareImages2d(Int16Image int16Array)
+        {
+            var secondImage = int16Array.Getbytes2d();
+            var newImage = new Int16Image("comparison of" + _fileName + " " + int16Array.GetFileName(), _width, _height);
+            for (var index = 0; index < _actualFileSize; index++)
+            {
+                newImage[index] = (UInt16)(_fileArr[index] - secondImage[index]);
+
+            }
+            var newInt16 = new Int16Image("comparison of" + _fileName + " " + int16Array.GetFileName(), _width, _height, newImage, _actualFileSize);
+            return newInt16;
+        }
+
+        public UInt16[][] Getbytes2d()
+        {
+            return _fileArr2d;       
+        }
+
         public UInt16[] Getbytes()
         {
             return _fileArr;
         }
+
+        
 
 
         public string GetFileName()
@@ -75,18 +131,21 @@ namespace RawReader
             for (var index = 0; index < _actualFileSize; index++)
             {
                 newImage[index] = (UInt16)(_fileArr[index] - secondImage[index]);
-                //Console.WriteLine(newImage[index]);
+  
             }
             var newInt16 = new Int16Image("comparison of" + _fileName + " " + int16Array.GetFileName(), _width, _height, newImage, _actualFileSize);
             return newInt16;
         }
 
-        public void OutPutTofile() {
+        
+
+        public  void OutPutTofile() {
 
             byte[] result = new byte[_fileArr.Length * sizeof(UInt16)];
             Buffer.BlockCopy(_fileArr, 0, result, 0, result.Length);
             Console.WriteLine(result);
-            File.WriteAllBytes(_fileName, result);
+            
+             File.WriteAllBytesAsync(_fileName, result);
         }
 
 
