@@ -123,7 +123,10 @@ namespace RawReader
             return _fileArr;
         }
 
-        
+        public int GetFileSize()
+        {
+            return _width * _height * sizeof(UInt16);
+        }
 
 
         public string GetFileName()
@@ -147,7 +150,15 @@ namespace RawReader
 
         public void Output2dToFile()
         {
+            byte[] result = new byte[GetFileSize()];
+            for(int h = 0; h < _height; h++)
+            {
+                Buffer.BlockCopy(_fileArr2d[h], 0, result, (h * _width), _width * sizeof(UInt16));
+            }
+            
+            File.WriteAllBytesAsync(_fileName, result);
         }
+    
 
         public  void OutPutTofile()
         {
