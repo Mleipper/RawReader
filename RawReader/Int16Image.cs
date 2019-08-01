@@ -96,18 +96,26 @@ namespace RawReader
         {
             var secondImage = int16Array.Getbytes2d();
             var newImage = new Int16Image("comparison of" + _fileName + " " + int16Array.GetFileName(), _width, _height);
-            for (var index = 0; index < _actualFileSize; index++)
+            newImage.InitialiseArr(_width, _height);
+            UInt16[][] newImageArr = newImage.Getbytes2d();
+            for (var height = 0; height < _height; height++)
             {
-                newImage[index] = (UInt16)(_fileArr[index] - secondImage[index]);
+                for (int width = 0; width < _width; width++)
+                    newImageArr[height][width] = (UInt16)(_fileArr2d[height][width] - secondImage[height][width]);
 
             }
-            var newInt16 = new Int16Image("comparison of" + _fileName + " " + int16Array.GetFileName(), _width, _height, newImage, _actualFileSize);
-            return newInt16;
+            newImage.SetArr2d(newImageArr);
+            return newImage;
         }
 
         public UInt16[][] Getbytes2d()
         {
             return _fileArr2d;       
+        }
+
+        public void SetArr2d(UInt16[][] SetArr2d)
+        {
+            _fileArr2d = SetArr2d;
         }
 
         public UInt16[] Getbytes()
@@ -137,15 +145,15 @@ namespace RawReader
             return newInt16;
         }
 
-        
+        public void Output2dToFile()
+        {
+        }
 
-        public  void OutPutTofile() {
-
+        public  void OutPutTofile()
+        {
             byte[] result = new byte[_fileArr.Length * sizeof(UInt16)];
             Buffer.BlockCopy(_fileArr, 0, result, 0, result.Length);
-            Console.WriteLine(result);
-            
-             File.WriteAllBytesAsync(_fileName, result);
+            File.WriteAllBytesAsync(_fileName, result);
         }
 
 
